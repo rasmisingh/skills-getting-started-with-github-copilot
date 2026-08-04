@@ -1,10 +1,16 @@
 import { test, expect } from '@playwright/test';
 
-test('EPAM client work navigation', async ({ page }) => {
-  await page.goto('https://www.epam.com/');
+test.use({ channel: 'msedge' });
 
-  await page.getByRole('menuitem', { name: 'Services' }).hover();
-  await page.getByRole('link', { name: /Explore Our Client Work/i }).click();
+test('EPAM client work navigation in Microsoft Edge', async ({ page }) => {
+  await page.goto('https://www.epam.com/', { waitUntil: 'domcontentloaded' });
+
+  const servicesMenu = page.getByRole('menuitem', { name: /^Services$/i });
+  await servicesMenu.hover();
+
+  const clientWorkLink = page.getByRole('link', { name: /Explore Our Client Work/i });
+  await expect(clientWorkLink).toBeVisible();
+  await clientWorkLink.click();
 
   await expect(page.getByText('Client Work', { exact: false })).toBeVisible();
 });
